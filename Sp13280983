@@ -1,0 +1,193 @@
+local ScreenGui = Instance.new("ScreenGui")
+local StaminaFrames2 = Instance.new("Frame")
+local UICorner = Instance.new("UICorner")
+local TextLabel = Instance.new("TextLabel")
+local StaminaframesInside = Instance.new("Frame")
+local TextLabel_2 = Instance.new("TextLabel")
+
+ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+ScreenGui.ResetOnSpawn = false
+
+StaminaFrames2.Name = "StaminaFrames2"
+StaminaFrames2.Parent = ScreenGui
+StaminaFrames2.AnchorPoint = Vector2.new(0.5, 0.5)
+StaminaFrames2.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+StaminaFrames2.BorderSizePixel = 0
+StaminaFrames2.Position = UDim2.new(0.781, 0, 0.021, 0)
+StaminaFrames2.Size = UDim2.new(0.1, 0, 0.067, 0)
+
+UICorner.Parent = StaminaFrames2
+
+TextLabel.Parent = StaminaFrames2
+TextLabel.BackgroundTransparency = 1
+TextLabel.Size = UDim2.new(1, 0, 1, 0)
+TextLabel.Font = Enum.Font.Arcade
+TextLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
+TextLabel.TextScaled = true
+
+StaminaframesInside.Name = "StaminaframesInside"
+StaminaframesInside.Parent = StaminaFrames2
+StaminaframesInside.AnchorPoint = Vector2.new(0.5, 0.5)
+StaminaframesInside.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+StaminaframesInside.Position = UDim2.new(1.123, 0, 0.594, 0)
+StaminaframesInside.Size = UDim2.new(0.242, 0, 0.813, 0)
+
+TextLabel_2.Parent = StaminaframesInside
+TextLabel_2.BackgroundTransparency = 1
+TextLabel_2.Size = UDim2.new(1, 0, 1, 0)
+TextLabel_2.Font = Enum.Font.Arcade
+TextLabel_2.Text = "X"
+TextLabel_2.TextColor3 = Color3.fromRGB(255, 0, 0)
+TextLabel_2.TextScaled = true
+
+
+----------------------------------------------------------------
+-- NEW SYSTEM STARTS HERE
+----------------------------------------------------------------
+
+local Players = game:GetService("Players")
+local UIS = game:GetService("UserInputService")
+
+local player = Players.LocalPlayer
+local keybind = Enum.KeyCode.LeftShift
+
+local running = false
+local runLoop = nil
+
+-- Addition value you want to modify
+local Addition = 0.34
+
+
+----------------------------------------------------------------
+-- SPEED SYSTEM
+----------------------------------------------------------------
+
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+local speedFolder = character:WaitForChild("SpeedMultipliers")
+
+local BASE_SPEED = {
+    Survivors = 12,
+    Killers = 9
+}
+
+local function getNormalSpeed()
+    return 13
+end
+
+local function getFastSpeed()
+    local base = humanoid:GetAttribute("BaseSpeed") or 3
+
+    local multiplier = 1
+    if speedFolder then
+        for _, valueObj in ipairs(speedFolder:GetChildren()) do
+            if valueObj:IsA("NumberValue") then
+                multiplier = multiplier * valueObj.Value
+            end
+        end
+    end
+
+    return base * multiplier + Addition
+end
+
+local function updateSpeeds()
+    if running and humanoid then
+        humanoid.WalkSpeed = getFastSpeed()
+    end
+end
+
+
+----------------------------------------------------------------
+-- UPDATE TEXT LABEL
+----------------------------------------------------------------
+
+local function updateMainLabel()
+    if running then
+        TextLabel.Text = "Activated (" .. string.format("%.2f", Addition) .. ")"
+    else
+        TextLabel.Text = "Addition: " .. string.format("%.2f", Addition)
+    end
+end
+
+updateMainLabel()  -- initialize
+
+
+----------------------------------------------------------------
+-- LISTEN FOR WALK SPEED CHANGES
+----------------------------------------------------------------
+
+humanoid.Changed:Connect(function(prop)
+    if prop == "WalkSpeed" then
+        updateSpeeds()
+    end
+end)
+
+
+----------------------------------------------------------------
+-- HANDLE RESPAWN
+----------------------------------------------------------------
+
+player.CharacterAdded:Connect(function(char)
+    character = char
+    humanoid = char:WaitForChild("Humanoid")
+    speedFolder = char:WaitForChild("SpeedMultipliers")
+
+    humanoid.Changed:Connect(function(prop)
+        if prop == "WalkSpeed" then
+            updateSpeeds()
+        end
+    end)
+
+    updateMainLabel()
+end)
+
+
+----------------------------------------------------------------
+-- K / L TO MODIFY ADDITION
+----------------------------------------------------------------
+
+UIS.InputBegan:Connect(function(input, gp)
+    if gp then return end
+
+    if input.KeyCode == Enum.KeyCode.K then
+        Addition -= 0.02
+        updateMainLabel()
+    end
+
+    if input.KeyCode == Enum.KeyCode.L then
+        Addition += 0.02
+        updateMainLabel()
+    end
+end)
+
+
+----------------------------------------------------------------
+-- SHIFT TO RUN
+----------------------------------------------------------------
+
+task.spawn(function()
+    while true do
+        if UIS:IsKeyDown(keybind) then
+            if not running then
+                task.wait(0.3)
+                running = true
+                updateMainLabel()
+
+                runLoop = task.spawn(function()
+                    while running do
+                        updateSpeeds()
+                        task.wait(0.1)
+                    end
+                end)
+            end
+        else
+            if running then
+                running = false
+                updateMainLabel()
+                updateSpeeds()
+            end
+        end
+        task.wait(0.05)
+    end
+end)
