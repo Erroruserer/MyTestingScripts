@@ -260,7 +260,7 @@ local SpeedAddition = Tab:CreateButton({
 })
 
 local Button = Tab:CreateButton({
-    Name = "Button Example",
+    Name = "Current Addition",
     Callback = function()
         -- Get the value inside the table
         local value = ImportantInstances.addition
@@ -467,7 +467,7 @@ local VeeButton = Tab:CreateButton({
 
 
 local AnchorKey = Tab:CreateKeybind({
-    Name = "Highlight All Players",
+    Name = "AnchorPlayer",
     CurrentKeybind = "C",
     HoldToInteract = false,
     Flag = "AnchorKey",
