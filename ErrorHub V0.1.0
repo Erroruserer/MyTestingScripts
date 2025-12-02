@@ -1,0 +1,689 @@
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+local speedFolder = game.Players.LocalPlayer.Character:WaitForChild("SpeedMultipliers")
+
+local ImportantInstances = {
+	addition = 0.34
+}																																				
+----Fuctions
+local Workspace = game:GetService("Workspace")
+local Players = game:GetService("Players")
+local PlayerLocal = Players.LocalPlayer--14	
+local Character = PlayerLocal.Character or PlayerLocal.CharacterAdded:Wait()--15
+local Root = Character:WaitForChild("HumanoidRootPart")--16
+--14--15--22--16--20--21
+local r20_0 = 30--20
+local r21_0 = 10--21
+local function MapFinder()--22
+ return workspace:WaitForChild("Map"):FindFirstChild("Ingame"):FindFirstChild("Map")
+end
+--
+local Window = Rayfield:CreateWindow({
+   Name = "Forsaken Hub",
+   Icon = 0, -- Icon in Topbar. Can use Lucide Icons (string) or Roblox Image (number). 0 to use no icon (default).
+   LoadingTitle = "Error Library",
+   LoadingSubtitle = "by error",
+   ShowText = "Rayfield", -- for mobile users to unhide rayfield, change if you'd like
+   Theme = {
+			TextColor = Color3.fromRGB(240, 240, 240),
+
+			Background = Color3.fromRGB(30, 20, 40),
+			Topbar = Color3.fromRGB(40, 25, 50),
+			Shadow = Color3.fromRGB(20, 15, 30),
+
+			NotificationBackground = Color3.fromRGB(35, 20, 40),
+			NotificationActionsBackground = Color3.fromRGB(240, 240, 250),
+
+			TabBackground = Color3.fromRGB(60, 40, 80),
+			TabStroke = Color3.fromRGB(70, 45, 90),
+			TabBackgroundSelected = Color3.fromRGB(180, 140, 200),
+			TabTextColor = Color3.fromRGB(230, 230, 240),
+			SelectedTabTextColor = Color3.fromRGB(50, 20, 50),
+
+			ElementBackground = Color3.fromRGB(45, 30, 60),
+			ElementBackgroundHover = Color3.fromRGB(50, 35, 70),
+			SecondaryElementBackground = Color3.fromRGB(40, 30, 55),
+			ElementStroke = Color3.fromRGB(70, 50, 85),
+			SecondaryElementStroke = Color3.fromRGB(65, 45, 80),
+
+			SliderBackground = Color3.fromRGB(100, 60, 150),
+			SliderProgress = Color3.fromRGB(130, 80, 180),
+			SliderStroke = Color3.fromRGB(150, 100, 200),
+
+			ToggleBackground = Color3.fromRGB(45, 30, 55),
+			ToggleEnabled = Color3.fromRGB(120, 60, 150),
+			ToggleDisabled = Color3.fromRGB(94, 47, 117),
+			ToggleEnabledStroke = Color3.fromRGB(140, 80, 170),
+			ToggleDisabledStroke = Color3.fromRGB(124, 71, 150),
+			ToggleEnabledOuterStroke = Color3.fromRGB(90, 40, 120),
+			ToggleDisabledOuterStroke = Color3.fromRGB(80, 50, 110),
+
+			DropdownSelected = Color3.fromRGB(50, 35, 70),
+			DropdownUnselected = Color3.fromRGB(35, 25, 50),
+
+			InputBackground = Color3.fromRGB(45, 30, 60),
+			InputStroke = Color3.fromRGB(80, 50, 110),
+			PlaceholderColor = Color3.fromRGB(178, 150, 200)
+		}, -- Check https://docs.sirius.menu/rayfield/configuration/themes
+
+   ToggleUIKeybind = "Z", -- The keybind to toggle the UI visibility (string like "K" or Enum.KeyCode)
+
+   DisableRayfieldPrompts = false,
+   DisableBuildWarnings = false, -- Prevents Rayfield from warning when the script has a version mismatch with the interface
+
+   ConfigurationSaving = {
+      Enabled = false,
+      FolderName = nil, -- Create a custom folder for your hub/game
+      FileName = "Big Hub"
+   },
+
+   Discord = {
+      Enabled = false, -- Prompt the user to join your Discord server if their executor supports it
+      Invite = "noinvitelink", -- The Discord invite code, do not include discord.gg/. E.g. discord.gg/ ABCD would be ABCD
+      RememberJoins = true -- Set this to false to make them join the discord every time they load it up
+   },
+
+   KeySystem = false, -- Set this to true to use our key system
+   KeySettings = {
+      Title = "Untitled",
+      Subtitle = "Key System",
+      Note = "No method of obtaining the key is provided", -- Use this to tell the user how to get a key
+      FileName = "Key", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
+      SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
+      GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
+      Key = {"Hello"} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
+   }
+})
+
+Rayfield:Notify({
+   Title = "Error Succecfully Loaded",
+   Content = "Notification Content",
+   Duration = 3.5,
+   Image = 4483362458,
+})
+
+local Tab = Window:CreateTab("Tab Example", 4483362458) -- Title, Image
+
+local Section = Tab:CreateSection("Buttons")
+
+local SpeedAddition = Tab:CreateButton({
+    Name = "Speed Addition",
+    Callback = function()
+
+        ----------------------------------------------------------------
+        -- NEW SYSTEM STARTS HERE
+        ----------------------------------------------------------------
+
+        local Players = game:GetService("Players")
+        local UIS = game:GetService("UserInputService")
+
+        local player = Players.LocalPlayer
+        local keybind = Enum.KeyCode.LeftShift
+
+        local running = false
+        local runLoop = nil
+
+        -- Addition value you want to modify
+        local Addition = ImportantInstances
+
+
+        ----------------------------------------------------------------
+        -- SPEED SYSTEM
+        ----------------------------------------------------------------
+
+        local character = player.Character or player.CharacterAdded:Wait()
+        local humanoid = character:WaitForChild("Humanoid")
+        local speedFolder = character:WaitForChild("SpeedMultipliers")
+
+        local BASE_SPEED = {
+            Survivors = 12,
+            Killers = 9
+        }
+
+        local function getNormalSpeed()
+            return 13
+        end
+
+        local function getFastSpeed()
+            local base = humanoid:GetAttribute("BaseSpeed") or 3
+
+            local multiplier = 1
+            if speedFolder then
+                for _, valueObj in ipairs(speedFolder:GetChildren()) do
+                    if valueObj:IsA("NumberValue") then
+                        multiplier = multiplier * valueObj.Value
+                    end
+                end
+            end
+
+            return base * multiplier + Addition.addition
+        end
+
+        local function updateSpeeds()
+            if running and humanoid then
+                humanoid.WalkSpeed = getFastSpeed()
+            end
+        end
+        ----------------------------------------------------------------
+        -- LISTEN FOR WALK SPEED CHANGES
+        ----------------------------------------------------------------
+
+        humanoid.Changed:Connect(function(prop)
+            if prop == "WalkSpeed" then
+                updateSpeeds()
+            end
+        end)
+
+
+        ----------------------------------------------------------------
+        -- HANDLE RESPAWN
+        ----------------------------------------------------------------
+        player.CharacterAdded:Connect(function(char)
+            character = char
+            humanoid = char:WaitForChild("Humanoid")
+            speedFolder = char:WaitForChild("SpeedMultipliers")
+
+            humanoid.Changed:Connect(function(prop)
+                if prop == "WalkSpeed" then
+                    updateSpeeds()
+                end
+            end)
+
+        end)
+
+
+        ----------------------------------------------------------------
+        -- K / L TO MODIFY ADDITION
+        ----------------------------------------------------------------
+
+        local UIS = game:GetService("UserInputService")
+
+		UIS.InputBegan:Connect(function(input, gp)
+    		if gp then return end
+
+    		local key = input.KeyCode
+
+    		-- big increment (4 held)
+    		if key == Enum.KeyCode.K and UIS:IsKeyDown(Enum.KeyCode.Four) then
+        		Addition.addition += 1
+        		return
+    		end
+
+    		-- big decrement (4 held)
+    		if key == Enum.KeyCode.L and UIS:IsKeyDown(Enum.KeyCode.Four) then
+        		Addition.addition -= 1
+        		return
+    		end
+
+    		-- small increment
+    		if key == Enum.KeyCode.K then
+        		Addition.addition += 0.02
+    		end
+
+    		-- small decrement
+    		if key == Enum.KeyCode.L then
+       			Addition.addition -= 0.02
+    		end
+		end)
+
+
+
+        ----------------------------------------------------------------
+        -- SHIFT TO RUN
+        ----------------------------------------------------------------
+
+        task.spawn(function()
+            while true do
+                if UIS:IsKeyDown(keybind) then
+                    if not running then
+                        task.wait(0.3)
+                        running = true
+
+                        runLoop = task.spawn(function()
+                            while running do
+                                updateSpeeds()
+                                task.wait(0.1)
+                            end
+                        end)
+                    end
+                else
+                    if running then
+                        running = false
+                        updateSpeeds()
+                    end
+                end
+                task.wait(0.05)
+            end
+        end)
+
+    end,
+})
+
+local Button = Tab:CreateButton({
+    Name = "Button Example",
+    Callback = function()
+        -- Get the value inside the table
+        local value = ImportantInstances.addition
+        local textValue = tostring(value)
+
+        -- Notify using Rayfield
+        Rayfield:Notify({
+    		Title = "Speed Addition",
+    		Content = "Current Addition value: " .. string.format("Current Addition value: %.2f", ImportantInstances.addition),
+    		Duration = 6,
+    		Image = 4483362458,
+		})
+
+    end,
+})
+
+
+local Divider = Tab:CreateDivider()
+
+local Section = Tab:CreateSection("Keybinds")
+
+local EspKeybind = Tab:CreateKeybind({
+    Name = "Highlight All Players",
+    CurrentKeybind = "Y",
+    HoldToInteract = false,
+    Flag = "EspKey",
+    Callback = function()
+        local Players = game:GetService("Players")
+        local LocalPlayer = Players.LocalPlayer
+
+        -- Toggle state
+        local enabled = false
+        if _G.HighlightAllEnabled == nil then _G.HighlightAllEnabled = false end
+        _G.HighlightAllEnabled = not _G.HighlightAllEnabled
+        enabled = _G.HighlightAllEnabled
+
+        -- Tables to store created objects
+        if _G.HighlightObjects == nil then _G.HighlightObjects = {} end
+        if _G.BillboardObjects == nil then _G.BillboardObjects = {} end
+
+        if enabled then
+            for _, player in ipairs(Players:GetPlayers()) do
+                local char = player.Character
+                if char and not char:FindFirstChild("PlayerESP") then
+
+                    -- HIGHLIGHT
+                    local h = Instance.new("Highlight")
+                    h.Name = "PlayerESP"
+                    h.FillTransparency = 0.5
+                    h.OutlineTransparency = 0
+                    h.OutlineColor = Color3.fromRGB(255, 0, 0)
+                    h.Adornee = char
+                    h.Parent = char
+					h.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                    table.insert(_G.HighlightObjects, h)
+
+                    -- HEALTH DISPLAY
+                    local humanoid = char:FindFirstChildOfClass("Humanoid")
+                    local head = char:FindFirstChild("Head")
+                    if humanoid and head then
+                        local billboard = Instance.new("BillboardGui")
+                        billboard.Name = "HealthDisplay"
+                        billboard.Adornee = head
+                        billboard.Size = UDim2.new(0, 100, 0, 30)
+                        billboard.StudsOffset = Vector3.new(0, 2.5, 0)
+                        billboard.AlwaysOnTop = true
+                        billboard.Parent = head
+
+                        local text = Instance.new("TextLabel")
+                        text.BackgroundTransparency = 1
+                        text.Size = UDim2.new(1, 0, 1, 0)
+                        text.TextColor3 = Color3.new(1, 1, 1)
+                        text.TextStrokeColor3 = Color3.new(0, 0, 0)
+                        text.TextStrokeTransparency = 0.3
+                        text.Font = Enum.Font.SourceSansBold
+                        text.TextScaled = true
+                        text.Parent = billboard
+
+                        text.Text = humanoid.Health .. " / " .. humanoid.MaxHealth
+
+                        humanoid.HealthChanged:Connect(function(hp)
+                            text.Text = hp .. " / " .. humanoid.MaxHealth
+                        end)
+                        humanoid:GetPropertyChangedSignal("MaxHealth"):Connect(function()
+                            text.Text = humanoid.Health .. " / " .. humanoid.MaxHealth
+                        end)
+
+                        table.insert(_G.BillboardObjects, billboard)
+                    end
+                end
+            end
+        else
+            -- DISABLE: Remove all highlights and billboards
+            for _, h in ipairs(_G.HighlightObjects) do
+                if h then h:Destroy() end
+            end
+            for _, b in ipairs(_G.BillboardObjects) do
+                if b then b:Destroy() end
+            end
+            _G.HighlightObjects = {}
+            _G.BillboardObjects = {}
+        end
+    end,
+})
+
+local GeneratorKey = Tab:CreateKeybind({
+    Name = "Complete A Generator Puzzle",
+    CurrentKeybind = "U",
+    HoldToInteract = false,
+    Flag = "GeneratorKey",
+    Callback = function()
+     local r0_17 = PlayerLocal.Character or PlayerLocal.CharacterAdded:Wait()
+      Character = r0_17
+      Root = Character:WaitForChild("HumanoidRootPart")
+      r0_17 = MapFinder()
+      if r0_17 then
+        for r4_17, r5_17 in pairs(r0_17:GetChildren()) do
+          local r6_17 = r5_17:FindFirstChild("Remotes")
+          local r7_17 = r5_17:FindFirstChild("Progress")
+          if r6_17 and r6_17:FindFirstChild("RE") and r7_17 and r5_17:IsA("Model") then
+            local r8_17 = r5_17.PrimaryPart or r5_17:FindFirstChild("HumanoidRootPart") or r5_17:FindFirstChildWhichIsA("BasePart")
+            if r8_17 and (Root.Position - r8_17.Position).Magnitude <= r20_0 then
+              r6_17.RE:FireServer(r21_0)
+            end
+          end
+        end
+      end
+    end,
+})
+
+
+local VeeButton = Tab:CreateButton({
+    Name = "VeeronicaExploit",
+    Callback = function()
+        local Players = game:GetService("Players")
+        local RunService = game:GetService("RunService")
+        local UserInputService = game:GetService("UserInputService")
+
+        local player = Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+        local root = character:WaitForChild("HumanoidRootPart")
+
+        -- Function to create a wall part
+        local function createWall()
+            local p = Instance.new("Part")
+            p.Size = Vector3.new(0.2, 0.2, 5)
+            p.Anchored = true
+            p.CanCollide = false
+            p.CanQuery = false
+            p.CanTouch = false
+            p.Transparency = 1
+            p.Parent = workspace
+            return p
+        end
+
+        local leftWall = createWall()
+        local rightWall = createWall()
+
+        local SIDE_OFFSET = 2.2
+
+        RunService.RenderStepped:Connect(function()
+    		if not root then return end
+
+    		local rootPos = root.Position
+
+    		-- FULL rotation including X, Y, Z
+    		local rot = root.CFrame - root.CFrame.Position
+
+    		local rightOffset = rot:VectorToWorldSpace(Vector3.new(SIDE_OFFSET, 0, 0))
+    		local leftOffset  = rot:VectorToWorldSpace(Vector3.new(-SIDE_OFFSET, 0, 0))
+
+    		rightWall.CFrame = CFrame.new(rootPos + rightOffset, rootPos + rightOffset + rot.LookVector)
+    		leftWall.CFrame  = CFrame.new(rootPos + leftOffset, rootPos + leftOffset + rot.LookVector)
+		end)
+
+
+        player.CharacterAdded:Connect(function(char)
+            character = char
+            root = char:WaitForChild("HumanoidRootPart")
+        end)
+
+        --------------------------------------------------------------------
+        -- 🔥 NORMAL ROBLOX KEYBIND (T KEY)
+        --------------------------------------------------------------------
+        UserInputService.InputBegan:Connect(function(input, gameProcessed)
+            if gameProcessed then return end
+
+            if input.KeyCode == Enum.KeyCode.P then
+                if leftWall.Transparency == 1 then
+                    leftWall.Transparency = 0.7
+                    rightWall.Transparency = 0.7
+                    leftWall.CanCollide = true
+                    rightWall.CanCollide = true
+                else
+                    leftWall.Transparency = 1
+                    rightWall.Transparency = 1
+                    leftWall.CanCollide = false
+                    rightWall.CanCollide = false
+                end
+            end
+        end)
+    end,
+})
+
+
+local AnchorKey = Tab:CreateKeybind({
+    Name = "Highlight All Players",
+    CurrentKeybind = "C",
+    HoldToInteract = false,
+    Flag = "AnchorKey",
+    Callback = function()
+	 local Players = game:GetService("Players")
+	 local player = Players.LocalPlayer
+	 local character = player.Character or player.CharacterAdded:Wait()
+	 local CollisionHitbox = character:WaitForChild("CollisionHitbox")
+
+	 CollisionHitbox.Anchored = not CollisionHitbox.Anchored
+    end,
+})
+local Divider = Tab:CreateDivider()
+
+
+
+local StastTab = Window:CreateTab("Stats", 4483362458) -- Title, Image
+
+local Section123 = StastTab:CreateSection("Currency")
+local StatsFolder = game.Players.LocalPlayer.PlayerData.Stats
+local Money = StastTab:CreateLabel("Current $: " .. StatsFolder.Currency.Money.Value, 0, Color3.fromRGB(125, 218, 88), false) -- Title, Icon, Color, IgnoreTheme
+local KillerChance = StastTab:CreateLabel("Malice: " .. StatsFolder:WaitForChild("General"):WaitForChild("KillerChance").Value, 0, Color3.fromRGB(0, 0, 0), false) -- Title, Icon, Color, IgnoreTheme
+
+local Button = StastTab:CreateButton({
+    Name = "Show Next Killer",
+    Callback = function()
+
+        local highest = 0
+        local topPlayers = {}
+
+        for _, plr in ipairs(Players:GetPlayers()) do
+            local data = plr:FindFirstChild("PlayerData")
+            if data then
+                local stats = data:FindFirstChild("Stats")
+                local general = stats and stats:FindFirstChild("General")
+                local kc = general and general:FindFirstChild("KillerChance")
+
+                if kc and typeof(kc.Value) == "number" then
+                    if kc.Value > highest then
+                        highest = kc.Value
+                        topPlayers = {plr.DisplayName}
+                    elseif kc.Value == highest then
+                        table.insert(topPlayers, plr.DisplayName)
+                    end
+                end
+            end
+        end
+
+        local result
+
+        if highest == 0 or #topPlayers == 0 then
+            result = "???"
+        else
+            result = table.concat(topPlayers, " & ")
+        end
+
+        Rayfield:Notify({
+            Title = "Next Killer",
+            Content = result,
+            Duration = 6.5,
+            Image = 4483362458,
+        })
+    end,
+})
+
+
+local Section10 = StastTab:CreateSection("Killer")
+local KillerWins = StastTab:CreateLabel("Killer Wins: " .. StatsFolder.KillerStats.KillerWins.Value, 0, Color3.fromRGB(70, 70, 70), false) -- Title, Icon, Color, IgnoreTheme
+local KillerLosses = StastTab:CreateLabel("Killer Losses: " .. StatsFolder.KillerStats.KillerLosses.Value, 0, Color3.fromRGB(70, 70, 70), false) -- Title, Icon, Color, IgnoreTheme
+local Kills = StastTab:CreateLabel("Kills: " .. StatsFolder.KillerStats.Kills.Value, 0, Color3.fromRGB(70, 70, 70), false) -- Title, Icon, Color, IgnoreTheme
+
+local Section4324 = StastTab:CreateSection("Survivor")
+local SurvivorWins = StastTab:CreateLabel("Survivor Wins: " .. StatsFolder.SurvivorStats.SurvivorWins.Value, 0, Color3.fromRGB(70, 70, 70), false) -- Title, Icon, Color, IgnoreTheme
+local SurvivorLosses = StastTab:CreateLabel("Survivor Losses: " .. StatsFolder.SurvivorStats.SurvivorLosses.Value, 0, Color3.fromRGB(70, 70, 70), false) -- Title, Icon, Color, IgnoreTheme
+local ObjectivesCompleted = StastTab:CreateLabel("Objectives Completed: " .. StatsFolder.SurvivorStats.ObjectivesCompleted.Value, 0, Color3.fromRGB(70, 70, 70), false) -- Title, Icon, Color, IgnoreTheme
+
+-- Currency
+StatsFolder.Currency.Money.Changed:Connect(function(new)
+    Money:Set("Current $: " .. new)
+end)
+
+-- General
+StatsFolder.General.KillerChance.Changed:Connect(function(new)
+    KillerChance:Set("Malice: " .. new)
+end)
+
+-- Killer Stats
+StatsFolder.KillerStats.KillerWins.Changed:Connect(function(new)
+    KillerWins:Set("Killer Wins: " .. new)
+end)
+
+StatsFolder.KillerStats.KillerLosses.Changed:Connect(function(new)
+    KillerLosses:Set("Killer Losses: " .. new)
+end)
+
+StatsFolder.KillerStats.Kills.Changed:Connect(function(new)
+    Kills:Set("Kills: " .. new)
+end)
+
+-- Survivor Stats
+StatsFolder.SurvivorStats.SurvivorWins.Changed:Connect(function(new)
+    SurvivorWins:Set("Survivor Wins: " .. new)
+end)
+
+StatsFolder.SurvivorStats.SurvivorLosses.Changed:Connect(function(new)
+    SurvivorLosses:Set("Survivor Losses: " .. new)
+end)
+
+StatsFolder.SurvivorStats.ObjectivesCompleted.Changed:Connect(function(new)
+    ObjectivesCompleted:Set("Objectives Completed: " .. new)
+end)
+
+local HardModeTab = Window:CreateTab("Hard Mode", 4483362458) -- Title, Image
+
+
+local Section = HardModeTab:CreateSection("HardMode; UNSTABLE; DO NOT USE")
+local additionValues = {
+    ["Slasher"] = -15,
+	["c00lkidd"] = -18.75,
+	["John Doe"] = -16.75,
+	["Guest 666"] = -16.75,
+	["1x1x1x1"] = -17,
+}
+
+local HardModeSpeed = HardModeTab:CreateButton({
+    Name = "HC Speed",
+    Callback = function()
+        local char = Character or PlayerLocal.CharacterAdded:Wait()
+        local name = char.Name
+
+        ImportantInstances.addition = additionValues[name] or -14
+    end,
+})
+
+local Toggle = HardModeTab:CreateToggle({
+    Name = "Hardcore Mode",
+    CurrentValue = false,
+    Flag = "HardcoreToggle",
+    Callback = function(enabled)
+
+        -- Disconnect old connections if toggle turns OFF
+        if _G.HardcoreConnection then
+            _G.HardcoreConnection:Disconnect()
+            _G.HardcoreConnection = nil
+        end
+
+        if not enabled then
+            Rayfield:Notify({
+                Title = "Hardcore Disabled",
+                Content = "You will no longer die instantly.",
+                Duration = 4,
+                Image = 4483362458,
+            })
+            return
+        end
+        
+        Rayfield:Notify({
+            Title = "Hardcore Enabled",
+            Content = "Any damage will instantly kill you.",
+            Duration = 4,
+            Image = 4483362458,
+        })
+
+        --------------------------------------------------------------------
+        -- HARDCORE FUNCTION
+        --------------------------------------------------------------------
+        local function setupHardcore(character)
+            local humanoid = character:WaitForChild("Humanoid")
+
+            task.wait(0.1) -- wait for health to finalize
+
+            local lastHealth = humanoid.Health
+
+            _G.HardcoreConnection = humanoid:GetPropertyChangedSignal("Health"):Connect(function()
+                local newHealth = humanoid.Health
+                
+                -- REAL DAMAGE detected
+                if newHealth < lastHealth then
+                    humanoid:TakeDamage(999999)
+					task.wait(0.2)
+					humanoid:ChangeState(Enum.HumanoidStateType.Dead)
+					task.wait(0.2)
+					humanoid.Health = 0
+                    task.wait(0.8)
+                    character:BreakJoints()
+                end
+
+                lastHealth = newHealth
+            end)
+        end
+
+        --------------------------------------------------------------------
+        -- APPLY TO CURRENT + FUTURE CHARACTERS
+        --------------------------------------------------------------------
+        if Character then
+            setupHardcore(PlayerLocal.Character)
+        end
+
+        PlayerLocal.CharacterAdded:Connect(function(char)
+            if enabled then
+                setupHardcore(char)
+            end
+        end)
+    end,
+})
+
+local FpsTab = Window:CreateTab("Fps", 4483362458) -- Title, Image
+
+local Toggle = FpsTab:CreateToggle({
+    Name = "Delete Useless Parts",
+    CurrentValue = false,
+    Flag = "PartDeleter",
+    Callback = function(enabled)
+	 
+	end,
+})
+
+task.wait(0.5)
+Window.ModifyTheme('Amethyst')
